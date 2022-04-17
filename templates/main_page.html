@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="container">
+      <div class="row">
+        <div class="span6">
+	  <div>
+	 <b> Ceci est une demo pour la competition MLPC,
+     ceci permet de dire pour une information  donne si elle est fake ou non.
+	</b>
+</div>
+	  <!-- Source: -->
+	  <!-- http://openclipart.org/detail/34273/tango-system-lock-screen-by-warszawianka -->
+          <img src="/static/img/locked-screen.png" />
+        </div>
+        <div class="span6"> 
+              <label>Titre</label><input type="text" id='titre' placeholder="Titre" name="titre">
+              <label>Autheur</label><input type="text" id='autheur' placeholder="Autheur" name="autheur">
+              <label>Corps de l'information</label>
+              <textarea id='mail' >
+              </textarea>
+              <br/>
+              <button type="submit" id="Analyser" class="btn">Analyser</button>
+              <h5 id="reponse"></h5>
+           </div>
+        <script type="text/javascript">
+          (function() {
+              var httpRequest=document.getElementById("Analyser").addEventListener('click',makeRequest);
+          
+              function makeRequest(){
+                var titre=document.getElementById('titre').value;  
+                var autheur=document.getElementById('autheur').value;  
+                var mail=titre+' '+autheur+' '+document.getElementById('mail').value;
+                let link="https://mlpcfakenewsdetector.herokuapp.com/api/fakedetector"
+                // let link="http://localhost:8081/api/fakedetector";
+                fetch(link,{
+                    
+                //fetch("https://ia4gi2023.herokuapp.com:5000/api/spamdetector",{
+                    method:"POST",
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/json',
+                  },
+                    body: JSON.stringify(
+                      {'text':mail})
+                  })
+                    .then((response) => {
+                      console.log(response);
+                      return response.json();    
+                    })
+                    .then((responseJson) => {
+                            console.log(responseJson);
+                            var fake=responseJson['fake'];
+                            var truth=responseJson['truth'];
+                            var res;
+                            if(fake==0 && truth==0){
+                              res="une erreur s'est produite"
+                            }
+                            else if (fake==1){
+                              res='Cette information est fake'
+                            }  
+                            else{
+                              res="Cette infomation est fiable"
+                            }
+
+                            document.getElementById('reponse').textContent=res;       
+                    })
+                    .then(() => {console.log('ok')}).catch((error)=>{
+                      document.getElementById('reponse').textContent="Une erreur s'est produite lors du traitement verifier votre connexion";         
+                    })
+                  }
+          })();
+      </script>
+      </div>
+    </div>
+{% endblock %}
