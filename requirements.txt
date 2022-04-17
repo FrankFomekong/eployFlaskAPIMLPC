@@ -12,5 +12,7 @@ pandas==1.2.4
 resolvelib==0.5.4
 scikit-image==0.18.1
 scikit-learn 
-scipy 
-seaborn 
+scipy
+joblib
+wordcloud
+nltk
